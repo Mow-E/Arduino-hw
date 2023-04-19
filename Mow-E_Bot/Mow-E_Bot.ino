@@ -4,6 +4,7 @@
 MeUltrasonicSensor ultraSensor(PORT_10);
 MeEncoderOnBoard motor1(SLOT1);
 MeEncoderOnBoard motor2(SLOT2);
+MeLineFollower lineFollower(PORT_9);
 
 const int BUFFER_SIZE = 128;
 const int SPEED = 100;
@@ -53,6 +54,9 @@ void handleReceivedMessage() {
   if (incomingMessage[0] == 'U') {
     Serial.print(getUltrasonicDistance());
   }
+  if (incomingMessage[0] == 'L'){
+    Serial.print(getlightSensor());
+  }
 }
 
 void motorController() {
@@ -70,6 +74,9 @@ void motorController() {
   }
   if (isRotate) {
   }
+}
+int getlightSensor(){
+  return lineFollower.readSensors();
 }
 
 double getUltrasonicDistance() {
