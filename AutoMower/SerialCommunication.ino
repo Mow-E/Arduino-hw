@@ -13,7 +13,7 @@ void handleReceivedMessage() {
       isMan = false;
       break;
     case 'M':
-      isAuto = false;
+      isAuto, isCollision = false;
       isMan = true;
       break;
     case 'F':

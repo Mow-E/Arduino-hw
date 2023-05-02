@@ -22,7 +22,11 @@ MeLineFollower lineFollower(PORT_9);
 MeRGBLed rgbLED(0, 12);
 
 const int BUFFER_SIZE = 128;
-const int SPEED = 80;
+const int SPEED = 100;
+
+unsigned long previousMillis = 0; // Stores the last time the action was performed
+const long interval = 500;       // Interval at which the action should be performed (in milliseconds)
+unsigned long currentMillis = 0;
 
 char incomingMessage[BUFFER_SIZE] = { 0 };
 
@@ -60,12 +64,15 @@ void loop() {
 
 void mowerState() {
   if (isMan) {
+    setLEDLoop(GREEN);
     manuall();
   }
   if (isAuto) {
+    setLEDLoop(BLUE);
     autonomous();
   }
   if (isCollision) {
+    setLEDLoop(RED);
     collisionHandler();
   }
 }
@@ -89,7 +96,6 @@ void manuall() {
 }
 void autonomous() {
   if (isOkArea()) {
-    setLEDLoop(GREEN);
     // Serial.println("mowing...");
     isTooClose = lineIsLeftSide = lineIsRightSide = false;
 
@@ -97,10 +103,11 @@ void autonomous() {
   }
   //NOT OK AREA
   else {
+    //Serial.println("Colliding...");
     isCollision = true;
     isAuto = isMan = false;
     if (isTooCloseToObject()) {
-      Serial.println("TOO CLOSE");
+      //Serial.println("TOO CLOSE");
       isTooClose = true;
     }
     switch (getLightSensor()) {
