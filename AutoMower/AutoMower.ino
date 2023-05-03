@@ -15,7 +15,7 @@
 #define WHITE 255, 255, 255
 #define BLACK 0, 0, 0
 
-MeUltrasonicSensor ultraSensor(PORT_10);
+MeUltrasonicSensor ultraSensor(PORT_8);
 MeEncoderOnBoard Encoder_1(SLOT1);
 MeEncoderOnBoard Encoder_2(SLOT2);
 MeLineFollower lineFollower(PORT_9);
@@ -25,7 +25,7 @@ const int BUFFER_SIZE = 128;
 const int SPEED = 100;
 
 unsigned long previousMillis = 0; // Stores the last time the action was performed
-const long interval = 500;       // Interval at which the action should be performed (in milliseconds)
+const long interval = 800;       // Interval at which the action should be performed (in milliseconds)
 unsigned long currentMillis = 0;
 
 char incomingMessage[BUFFER_SIZE] = { 0 };
@@ -44,8 +44,9 @@ bool isTooClose = false;
 bool lineIsLeftSide = false;
 bool lineIsRightSide = false;
 
-void setup() {
 
+
+void setup() {
   Serial.begin(9600);
   rgbLED.setpin(44);
 
@@ -96,18 +97,14 @@ void manuall() {
 }
 void autonomous() {
   if (isOkArea()) {
-    // Serial.println("mowing...");
     isTooClose = lineIsLeftSide = lineIsRightSide = false;
-
     move(FORWARD, SPEED);
   }
   //NOT OK AREA
   else {
-    //Serial.println("Colliding...");
     isCollision = true;
     isAuto = isMan = false;
     if (isTooCloseToObject()) {
-      //Serial.println("TOO CLOSE");
       isTooClose = true;
     }
     switch (getLightSensor()) {

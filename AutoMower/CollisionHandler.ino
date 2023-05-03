@@ -1,6 +1,7 @@
 
 enum CollisionHandlingStates {
   WAIT,
+  TAKEPICTURE,
   MOVEBACK,
   TURNRIGHT,
   TURNLEFT,
@@ -24,12 +25,18 @@ void collisionHandler() {
           Serial.print("Wait ->");
           avoidState = HOLD;
           previousMillis = currentMillis;
-          //WAIT FOR TAKE PICTURE (SEND PICTURE COMMAND)
           currentState = MOVEBACK;
           break;
         case MOVEBACK:
           Serial.print("Moves back ->");
           avoidState = RETREAT;
+          previousMillis = currentMillis;
+          currentState = TAKEPICTURE;
+          break;
+        case TAKEPICTURE:
+          Serial.print("Take Picture ->");
+          //WAIT FOR TAKE PICTURE (SEND PICTURE COMMAND)
+          avoidState = HOLD;
           previousMillis = currentMillis;
           currentState = TURNRIGHT;
           break;
@@ -110,19 +117,20 @@ void collisionHandler() {
       }
     }
   }
-  switch (avoidState){
+  switch (avoidState) {
     case HOLD:
-      move(STOP,0);
+      move(STOP, 0);
       break;
     case RETREAT:
-      move(BACK,SPEED);
+      move(BACK, SPEED);
       break;
     case GORIGHT:
-      move(RIGHT, SPEED*1.6);
+
+      move(RIGHT, SPEED);
       break;
     case GOLEFT:
-      move(LEFT, SPEED*1.6);
-      break;
+       move(LEFT, SPEED);
+       break;
     case CONTINUE:
       //DO NOTHING STATE
       break;
