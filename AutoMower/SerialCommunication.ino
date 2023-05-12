@@ -37,6 +37,12 @@ void handleReceivedMessage() {
     case 'E':
       Serial.print(getLightSensor());
       break;
+    case '1':
+        //Add "beep"-function
+      break;
+    case '2':
+        //Add "beep"-function (beeps 2x)
+      break;
     case 'D':
       char colorStatic = incomingMessage[1];
       switch (colorStatic) {
@@ -58,16 +64,19 @@ void handleReceivedMessage() {
       char colorBlink = incomingMessage[1];
       switch (colorBlink) {
         case 'R':
-          setLEDLoopBlink(RED);
+          setLEDLoopBlink(RED, 1000);
           break;
         case 'G':
-          setLEDLoopBlink(GREEN);
+          setLEDLoopBlink(GREEN, 1000);
           break;
         case 'B':
-          setLEDLoopBlink(BLUE);
+          setLEDLoopBlink(BLUE, 1000);
           break;
         case 'W':
-          setLEDLoopBlink(WHITE);
+          setLEDLoopBlink(WHITE, 1000);
+          break;
+        case 'b':
+          setLEDLoopBlink(BLUETOOTHCOLOR, 1000);
           break;
       }
       break;

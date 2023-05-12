@@ -17,11 +17,11 @@ void setLEDLoop(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 //Sets the LED-ring in a blinking color with 1s delay between "color/off"
-void setLEDLoopBlink(uint8_t r, uint8_t g, uint8_t b) {
+void setLEDLoopBlink(uint8_t r, uint8_t g, uint8_t b, uint8_t time) {
   for (int i = 0; i < 3; i++) {
     setLEDLoop(r, g, b);
-    delay(1000);
+    delay(time);
     setLEDLoop(BLACK);
-    delay(1000);
+    delay(time);
   }
 }

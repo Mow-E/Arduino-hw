@@ -17,6 +17,12 @@
 #define WHITE 255, 255, 255
 #define BLACK 0, 0, 0
 
+#define AUTOCOLOR 144, 146, 189
+#define MANUALCOLOR 47, 57, 99
+#define BLUETOOTHCOLOR 36,182,85
+#define ALARMCOLOR 173,39,39
+#define BACKWARDCOLOR 242,99,28
+
 //Defined the different component-objects
 MeUltrasonicSensor ultraSensor(PORT_8);
 MeEncoderOnBoard Encoder_1(SLOT1);
@@ -85,18 +91,16 @@ void loop() {
 void mowerState() {
   switch (drivingMode) {
     case MANUALL:
-    //Serial.println("Manuall");
-      setLEDLoop(GREEN);
+      setLEDLoopBlink(MANUALCOLOR, 2000);
       manuall();
       break;
     case AUTO:
-    //Serial.println("AUTO");
-      setLEDLoop(BLUE);
+      setLEDLoop(AUTOCOLOR);
       autonomous();
       break;
     case COLLISION:
     //Serial.println("Collision");
-      setLEDLoop(RED);
+      setLEDLoop(ALARMCOLOR);
       collisionHandler();
       break;
   }
@@ -109,6 +113,7 @@ void manuall() {
       move(FORWARD, SPEED);
       break;
     case GO_BACK:
+      setLEDLoop(BACKWARDCOLOR);
       move(BACK, SPEED);
       break;
     case GO_STOP:
