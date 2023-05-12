@@ -9,32 +9,25 @@ void handleReceivedMessage() {
   char command = incomingMessage[0];
   switch (command) {
     case 'A':
-      isAuto = true;
-      isMan = false;
+      drivingMode = AUTO;
       break;
     case 'M':
-      isAuto, isCollision = false;
-      isMan = true;
+      drivingMode = MANUALL;
       break;
     case 'F':
-      isForward = true;
-      isBackward = isRight = isLeft = isStop = false;
+      manDirection = GO_FORWARD;
       break;
     case 'S':
-      isStop = true;
-      isBackward = isRight = isLeft = isForward = false;
+      manDirection = GO_STOP;
       break;
     case 'B':
-      isBackward = true;
-      isForward = isRight = isLeft = isStop = false;
+      manDirection = GO_BACK;
       break;
     case 'R':
-      isRight = true;
-      isBackward = isForward = isLeft = isStop = false;
+      manDirection = GO_RIGHT;
       break;
     case 'L':
-      isLeft = true;
-      isBackward = isRight = isForward = isStop = false;
+      manDirection = GO_LEFT;
       break;
     case 'U':
       Serial.print(getUltrasonicDistance());

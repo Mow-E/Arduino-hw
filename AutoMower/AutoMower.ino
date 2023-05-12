@@ -24,29 +24,40 @@ MeRGBLed rgbLED(0, 12);
 const int BUFFER_SIZE = 128;
 const int SPEED = 100;
 
-unsigned long previousMillis = 0; // Stores the last time the action was performed
-const long interval = 800;       // Interval at which the action should be performed (in milliseconds)
+unsigned long previousMillis = 0;  // Stores the last time the action was performed
+unsigned interval = 800;           // Interval at which the action should be performed (in milliseconds)
 unsigned long currentMillis = 0;
 
 char incomingMessage[BUFFER_SIZE] = { 0 };
 
-bool isForward = false;
-bool isBackward = false;
-bool isRight = false;
-bool isLeft = false;
-bool isStop = true;
+enum MowerMode {
+  AUTO,
+  MANUALL,
+  COLLISION
+};
+enum CollisionMode {
+  TO_CLOSE,
+  LINE_LEFT,
+  LINE_RIGHT
+};
+enum MANUALLMODE {
+  GO_FORWARD,
+  GO_BACK,
+  GO_RIGHT,
+  GO_LEFT,
+  GO_STOP
+};
 
-bool isAuto = false;
-bool isMan = true;
-bool isCollision = false;
-
-bool isTooClose = false;
-bool lineIsLeftSide = false;
-bool lineIsRightSide = false;
+MowerMode drivingMode;
+CollisionMode collisionReason;
+MANUALLMODE manDirection;
 
 
 
 void setup() {
+
+  drivingMode = MANUALL;
+  manDirection = GO_STOP;
   Serial.begin(9600);
   rgbLED.setpin(44);
 
@@ -64,58 +75,67 @@ void loop() {
 }
 
 void mowerState() {
-  if (isMan) {
-    setLEDLoop(GREEN);
-    manuall();
-  }
-  if (isAuto) {
-    setLEDLoop(BLUE);
-    autonomous();
-  }
-  if (isCollision) {
-    setLEDLoop(RED);
-    collisionHandler();
+  switch (drivingMode) {
+    case MANUALL:
+    //Serial.println("Manuall");
+      setLEDLoop(GREEN);
+      manuall();
+      break;
+    case AUTO:
+    //Serial.println("AUTO");
+      setLEDLoop(BLUE);
+      autonomous();
+      break;
+    case COLLISION:
+    //Serial.println("Collision");
+      setLEDLoop(RED);
+      collisionHandler();
+      break;
   }
 }
 
 void manuall() {
-  if (isForward) {
-    move(FORWARD, SPEED);
-  }
-  if (isBackward) {
-    move(BACK, SPEED);
-  }
-  if (isStop) {
-    move(STOP, 0);
-  }
-  if (isLeft) {
-    move(LEFT, SPEED);
-  }
-  if (isRight) {
-    move(RIGHT, SPEED);
+  switch (manDirection) {
+    case GO_FORWARD:
+      move(FORWARD, SPEED);
+      break;
+    case GO_BACK:
+      move(BACK, SPEED);
+      break;
+    case GO_STOP:
+      move(STOP, 0);
+      break;
+    case GO_LEFT:
+      move(LEFT, SPEED);
+      break;
+    case GO_RIGHT:
+      move(RIGHT, SPEED);
+      break;
   }
 }
 void autonomous() {
   if (isOkArea()) {
-    isTooClose = lineIsLeftSide = lineIsRightSide = false;
+    //isTooClose = lineIsLeftSide = lineIsRightSide = false;
     move(FORWARD, SPEED);
   }
   //NOT OK AREA
   else {
-    isCollision = true;
-    isAuto = isMan = false;
+    //isCollision = true;
+    //isAuto = isMan = false;
+    drivingMode = COLLISION;
     if (isTooCloseToObject()) {
-      isTooClose = true;
+      //isTooClose = true;
+      collisionReason = TO_CLOSE;
     }
     switch (getLightSensor()) {
       case 0:
       case 1:
-        lineIsLeftSide = true;
-        lineIsRightSide = false;
+        //lineIsLeftSide = true;
+        //lineIsRightSide = false;
+        collisionReason = LINE_RIGHT;
         break;
       case 2:
-        lineIsRightSide = true;
-        lineIsLeftSide = false;
+        collisionReason = LINE_LEFT;
         break;
     }
   }

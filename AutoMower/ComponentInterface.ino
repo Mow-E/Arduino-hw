@@ -12,6 +12,7 @@ void setLEDLoop(uint8_t r, uint8_t g, uint8_t b) {
     rgbLED.show();
   }
 }
+
 void setLEDLoopBlink(uint8_t r, uint8_t g, uint8_t b) {
   for (int i = 0; i < 3; i++) {
     setLEDLoop(r, g, b);
