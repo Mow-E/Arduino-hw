@@ -1,3 +1,4 @@
+//This functions looks if there is any incoming data on the Serial-bus
 void handleSerialCommunication() {
   while (Serial.available() > 0) {
     Serial.readBytesUntil('\n', incomingMessage, BUFFER_SIZE);
@@ -5,6 +6,7 @@ void handleSerialCommunication() {
   }
 }
 
+//This function will compare the received message to an instruction. It basically handles the messages. Add more cases if you want the mower to hande more commands
 void handleReceivedMessage() {
   char command = incomingMessage[0];
   switch (command) {

@@ -1,45 +1,51 @@
 
 #include "MeAuriga.h"
 
+//Defined the different directions the motors can turn to
 #define FORWARD 2
 #define BACK 1
 #define LEFT 3
 #define RIGHT 4
 #define STOP 5
 
-#define MAX_DISTANCE 5
+#define MAX_DISTANCE 5      //This is the maximum distance a mower can be to an object, before it avoids it. In (cm), change this if you want to go closer or avoid earlier.
 
+//Defined colors for the RGB-LED ring that is mounted on top of the mower.
 #define RED 255, 0, 0
 #define GREEN 0, 255, 0
 #define BLUE 0, 0, 255
 #define WHITE 255, 255, 255
 #define BLACK 0, 0, 0
 
+//Defined the different component-objects
 MeUltrasonicSensor ultraSensor(PORT_8);
 MeEncoderOnBoard Encoder_1(SLOT1);
 MeEncoderOnBoard Encoder_2(SLOT2);
 MeLineFollower lineFollower(PORT_9);
 MeRGBLed rgbLED(0, 12);
 
-const int BUFFER_SIZE = 128;
-const int SPEED = 100;
+const int BUFFER_SIZE = 128;       // The size of how long a serial-message can be stored
+const int SPEED = 100;             // The default speed of the mower (100/255), increase this if you want the mower to go faster in all directions
 
 unsigned long previousMillis = 0;  // Stores the last time the action was performed
-unsigned interval = 800;           // Interval at which the action should be performed (in milliseconds)
-unsigned long currentMillis = 0;
+unsigned interval = 800;           // This is the time for how long a  "collision-action" will be performed in (ms).
+unsigned long currentMillis = 0;   
 
-char incomingMessage[BUFFER_SIZE] = { 0 };
+char incomingMessage[BUFFER_SIZE] = { 0 };    //This is the created buffer of serial-communication
 
+//Declared the 3 different "main"-modes that the mower can be in
 enum MowerMode {
   AUTO,
   MANUALL,
   COLLISION
 };
+//Declared the different Collision mode (To close to an object, a black line is either at left or right of the mower)
 enum CollisionMode {
   TO_CLOSE,
   LINE_LEFT,
   LINE_RIGHT
 };
+//Declared the different modes(directions) in "Driving mode: Manuall"
 enum MANUALLMODE {
   GO_FORWARD,
   GO_BACK,
@@ -53,7 +59,7 @@ CollisionMode collisionReason;
 MANUALLMODE manDirection;
 
 
-
+// The setup() function will set the Default states and properties when the Mower is powered on. 
 void setup() {
 
   drivingMode = MANUALL;
@@ -69,11 +75,13 @@ void setup() {
   attachInterrupt(Encoder_2.getIntNum(), isr_process_encoder2, RISING);
 }
 
+//The main loop looks at incoming serial-communication and handles that if there is a new message. The Mowestate() function will perform the correct action that corresponds to that received message
 void loop() {
   handleSerialCommunication();
   mowerState();
 }
 
+//This is a state-machine that sets the mower in different driving modes: Manuall, Auto or in Collision (Avoid stuff).
 void mowerState() {
   switch (drivingMode) {
     case MANUALL:
@@ -94,6 +102,7 @@ void mowerState() {
   }
 }
 
+//State-machine for the "Manuall-mode", the mower can only be in one "state": go forward, backwards, stop or rotate to right and left. 
 void manuall() {
   switch (manDirection) {
     case GO_FORWARD:
@@ -113,25 +122,22 @@ void manuall() {
       break;
   }
 }
+
+//This is one of the "main"-modes the mower can be in, this mode makes the mower go autonmously and therefore can drive and perform actions by it self.
 void autonomous() {
   if (isOkArea()) {
-    //isTooClose = lineIsLeftSide = lineIsRightSide = false;
     move(FORWARD, SPEED);
   }
+
   //NOT OK AREA
   else {
-    //isCollision = true;
-    //isAuto = isMan = false;
     drivingMode = COLLISION;
     if (isTooCloseToObject()) {
-      //isTooClose = true;
       collisionReason = TO_CLOSE;
     }
     switch (getLightSensor()) {
       case 0:
       case 1:
-        //lineIsLeftSide = true;
-        //lineIsRightSide = false;
         collisionReason = LINE_RIGHT;
         break;
       case 2:
@@ -140,9 +146,13 @@ void autonomous() {
     }
   }
 }
+
+//Returns a "TRUE" if the mowers is inside an ok-area and and not to close to an object, if "FALSE" the mower will go into "collision-mode"
 bool isOkArea() {
   return (getUltrasonicDistance() > MAX_DISTANCE && getLightSensor() == 3);
 }
+
+//Checks if the mower is far away from an object that is in front of it. Returns true if it is to close, the mower will go into "collision-mode"
 bool isTooCloseToObject() {
   return (getUltrasonicDistance() <= MAX_DISTANCE);
 }

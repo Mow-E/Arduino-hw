@@ -1,4 +1,4 @@
-
+//This functions sets the direction of the motors
 void move(int direction, int speed) {
   int leftSpeed = 0;
   int rightSpeed = 0;
@@ -25,6 +25,7 @@ void move(int direction, int speed) {
   Encoder_2.loop();
 }
 
+//These two functions handles the interupt-serices requests for the two motors
 void isr_process_encoder1(void) {
   if (digitalRead(Encoder_1.getPortB()) == 0) {
     Encoder_1.pulsePosMinus();
