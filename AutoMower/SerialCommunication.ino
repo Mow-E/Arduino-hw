@@ -10,6 +10,16 @@ void handleSerialCommunication() {
 void handleReceivedMessage() {
   char command = incomingMessage[0];
   switch (command) {
+    case 'X':
+        Encoder_1.updateCurPos();
+        encoderValue_1 = Encoder_1.getCurPos();
+        Serial.print(encoderValue_1);
+      break;
+    case 'Y':
+        Encoder_2.updateCurPos();
+        encoderValue_2 = Encoder_2.getCurPos();
+        Serial.print(encoderValue_2);
+      break;
     case 'A':
       drivingMode = AUTO;
       break;
@@ -18,32 +28,6 @@ void handleReceivedMessage() {
       break;
     case 'F':
       manDirection = GO_FORWARD;
-      break;
-    case 'S':
-      manDirection = GO_STOP;
-      break;
-    case 'B':
-      manDirection = GO_BACK;
-      break;
-    case 'R':
-      manDirection = GO_RIGHT;
-      break;
-    case 'L':
-      manDirection = GO_LEFT;
-      break;
-    case 'U':
-      Serial.print(getUltrasonicDistance());
-      break;
-    case 'E':
-      Serial.print(getLightSensor());
-      break;
-    case '1':
-        playTone(1); 
-      break;
-    case '2':
-        playTone(2);
-      break;
-    case 'X':
         playStarWarsTheme();
       break;
     case 'D':

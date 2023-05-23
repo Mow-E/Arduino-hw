@@ -8,7 +8,7 @@
 #define RIGHT 4
 #define STOP 5
 
-#define MAX_DISTANCE 5      //This is the maximum distance a mower can be to an object, before it avoids it. In (cm), change this if you want to go closer or avoid earlier.
+#define MAX_DISTANCE 5  //This is the maximum distance a mower can be to an object, before it avoids it. In (cm), change this if you want to go closer or avoid earlier.
 
 //Defined colors for the RGB-LED ring that is mounted on top of the mower.
 #define RED 255, 0, 0
@@ -19,9 +19,9 @@
 
 #define AUTOCOLOR 144, 146, 189
 #define MANUALCOLOR 47, 57, 99
-#define BLUETOOTHCOLOR 36,182,85
-#define ALARMCOLOR 173,39,39
-#define BACKWARDCOLOR 242,99,28
+#define BLUETOOTHCOLOR 36, 182, 85
+#define ALARMCOLOR 173, 39, 39
+#define BACKWARDCOLOR 242, 99, 28
 
 #define BUZZ_PORT 45
 
@@ -33,14 +33,25 @@ MeLineFollower lineFollower(PORT_9);
 MeRGBLed rgbLED(0, 12);
 MeBuzzer buzzer;
 
-const int BUFFER_SIZE = 128;       // The size of how long a serial-message can be stored
-const int SPEED = 100;             // The default speed of the mower (100/255), increase this if you want the mower to go faster in all directions
+const long BAUD_RATE = 115200;
+
+const int BUFFER_SIZE = 128;  // The size of how long a serial-message can be stored
+const int SPEED = 100;        // The default speed of the mower (100/255), increase this if you want the mower to go faster in all directions
+
+const int WAIT_TIME = 1000;
+const int PICTURE_TIME = 3000;
+const int BACK_TIME = 1000;
+const int ROTATE_TIME = 2000;
+const int DONE_TIME = 500;
 
 unsigned long previousMillis = 0;  // Stores the last time the action was performed
-unsigned interval = 800;           // This is the time for how long a  "collision-action" will be performed in (ms).
-unsigned long currentMillis = 0;   
+unsigned interval = 1000;          // This is the time for how long a  "collision-action" will be performed in (ms).
+unsigned long currentMillis = 0;
 
-char incomingMessage[BUFFER_SIZE] = { 0 };    //This is the created buffer of serial-communication
+unsigned long encoderValue_1 = 0;
+unsigned long encoderValue_2 = 0;
+
+char incomingMessage[BUFFER_SIZE] = { 0 };  //This is the created buffer of serial-communication
 
 //Declared the 3 different "main"-modes that the mower can be in
 enum MowerMode {
@@ -68,12 +79,13 @@ CollisionMode collisionReason;
 MANUALLMODE manDirection;
 
 
-// The setup() function will set the Default states and properties when the Mower is powered on. 
+// The setup() function will set the Default states and properties when the Mower is powered on.
 void setup() {
+
 
   drivingMode = MANUALL;
   manDirection = GO_STOP;
-  Serial.begin(9600);
+  Serial.begin(BAUD_RATE);
   Serial.setTimeout(1);
   rgbLED.setpin(44);
 
@@ -104,14 +116,14 @@ void mowerState() {
       autonomous();
       break;
     case COLLISION:
-    //Serial.println("Collision");
+      //Serial.println("Collision");
       setLEDLoop(ALARMCOLOR);
       collisionHandler();
       break;
   }
 }
 
-//State-machine for the "Manuall-mode", the mower can only be in one "state": go forward, backwards, stop or rotate to right and left. 
+//State-machine for the "Manuall-mode", the mower can only be in one "state": go forward, backwards, stop or rotate to right and left.
 void manuall() {
   switch (manDirection) {
     case GO_FORWARD:
@@ -136,8 +148,15 @@ void manuall() {
 //This is one of the "main"-modes the mower can be in, this mode makes the mower go autonmously and therefore can drive and perform actions by it self.
 void autonomous() {
   if (isOkArea()) {
-    move(FORWARD, SPEED);
-    //Serial.print("W");
+    currentMillis = millis();
+    if (((currentMillis - previousMillis) >= WAIT_TIME)) {
+      previousMillis = currentMillis;
+      Serial.print("W");   
+      move(FORWARD, SPEED);    
+    }
+    else{   
+      move(FORWARD, SPEED); 
+    }
   }
 
   //NOT OK AREA

@@ -23,33 +23,33 @@ void collisionHandler() {
       case TO_CLOSE:
         switch (currentState) {
           case WAIT:
-            //Serial.print("Wait ->");
+            interval = WAIT_TIME;
             avoidState = HOLD;
             previousMillis = currentMillis;
             currentState = MOVEBACK;
             break;
           case MOVEBACK:
-            //Serial.print("Moves back ->");
+            interval = BACK_TIME;
             avoidState = RETREAT;
             previousMillis = currentMillis;
             currentState = TAKEPICTURE;
             break;
           case TAKEPICTURE:
-            //Serial.print("Take Picture ->");
             //WAIT FOR TAKE PICTURE (SEND PICTURE COMMAND)
+            interval = PICTURE_TIME;
             Serial.print("C");
             avoidState = HOLD;
             previousMillis = currentMillis;
             currentState = TURNRIGHT;
             break;
           case TURNRIGHT:
-            //Serial.print("Turns right ->");
+            interval = ROTATE_TIME;
             avoidState = GORIGHT;
             previousMillis = currentMillis;
             currentState = DONE;
             break;
           case DONE:
-            //Serial.println("Done");
+            interval = DONE_TIME;
             avoidState = CONTINUE;
             drivingMode = AUTO;
             previousMillis = currentMillis;
@@ -60,26 +60,26 @@ void collisionHandler() {
       case LINE_LEFT:
         switch (currentState) {
           case WAIT:
-            //Serial.print("Wait ->");
+            interval = WAIT_TIME;
             Serial.print("P");
             avoidState = HOLD;
             previousMillis = currentMillis;
             currentState = MOVEBACK;
             break;
           case MOVEBACK:
-            //Serial.print("Moves back ->");
+            interval = BACK_TIME;
             avoidState = RETREAT;
             previousMillis = currentMillis;
             currentState = TURNRIGHT;
             break;
           case TURNRIGHT:
-            //Serial.print("Turns right ->");
+            interval = ROTATE_TIME;
             avoidState = GORIGHT;
             previousMillis = currentMillis;
             currentState = DONE;
             break;
           case DONE:
-            //Serial.println("Done");
+            interval = DONE_TIME;
             avoidState = CONTINUE;
             drivingMode = AUTO;
             previousMillis = currentMillis;
@@ -90,26 +90,26 @@ void collisionHandler() {
       case LINE_RIGHT:
         switch (currentState) {
           case WAIT:
-            //Serial.print("Wait ->");
+            interval = WAIT_TIME;
             Serial.print("P");
             avoidState = HOLD;
             previousMillis = currentMillis;
             currentState = MOVEBACK;
             break;
           case MOVEBACK:
-            //Serial.print("Moves back ->");
             avoidState = RETREAT;
+            interval = BACK_TIME;
             previousMillis = currentMillis;
             currentState = TURNLEFT;
             break;
           case TURNLEFT:
-            //Serial.print("Turns left ->");
+            interval = ROTATE_TIME;
             avoidState = GOLEFT;
             previousMillis = currentMillis;
             currentState = DONE;
             break;
           case DONE:
-            //Serial.println("Done");
+            interval = DONE_TIME;
             avoidState = CONTINUE;
             drivingMode = AUTO;
             previousMillis = currentMillis;
