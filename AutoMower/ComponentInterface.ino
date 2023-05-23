@@ -1,4 +1,4 @@
-//returns what the "eyes"/ gray-scale sensors sees, it can be either 0,1,2 or 3 
+//returns what the "eyes"/ gray-scale sensors sees, it can be either 0,1,2 or 3
 int getLightSensor() {
   return lineFollower.readSensors();
 }
@@ -24,4 +24,23 @@ void setLEDLoopBlink(uint8_t r, uint8_t g, uint8_t b, uint8_t time) {
     setLEDLoop(BLACK);
     delay(time);
   }
+}
+void playTone(int t) {
+  for (int i = 0; i < t; i++) {
+    buzzer.tone(BUZZ_PORT, 440, 500);
+    buzzer.noTone();
+  }
+}
+
+void playStarWarsTheme() {
+ int melody[] = {392, 392, 392, 311, 494, 392, 311, 494, 392, 587, 587, 587, 622, 494, 392, 311, 494, 392};
+int noteDurations[] = {500, 500, 500, 350, 150, 500, 350, 150, 500, 500, 500, 500, 350, 150, 500, 350, 150, 500};
+
+for (int i = 0; i < sizeof(melody)/sizeof(int); i++) {
+  buzzer.tone(BUZZ_PORT, melody[i], noteDurations[i]);
+  delay(noteDurations[i]);
+  buzzer.noTone(BUZZ_PORT); // stop the sound after the note duration
+  delay(50); // a little delay between notes
+}
+
 }

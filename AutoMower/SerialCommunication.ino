@@ -38,10 +38,13 @@ void handleReceivedMessage() {
       Serial.print(getLightSensor());
       break;
     case '1':
-        //Add "beep"-function
+        playTone(1); 
       break;
     case '2':
-        //Add "beep"-function (beeps 2x)
+        playTone(2);
+      break;
+    case 'X':
+        playStarWarsTheme();
       break;
     case 'D':
       char colorStatic = incomingMessage[1];

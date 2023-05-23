@@ -37,7 +37,7 @@ void collisionHandler() {
           case TAKEPICTURE:
             //Serial.print("Take Picture ->");
             //WAIT FOR TAKE PICTURE (SEND PICTURE COMMAND)
-            //Serial.print("C");
+            Serial.print("C");
             avoidState = HOLD;
             previousMillis = currentMillis;
             currentState = TURNRIGHT;
@@ -61,7 +61,7 @@ void collisionHandler() {
         switch (currentState) {
           case WAIT:
             //Serial.print("Wait ->");
-            //Serial.print("P");
+            Serial.print("P");
             avoidState = HOLD;
             previousMillis = currentMillis;
             currentState = MOVEBACK;
@@ -91,7 +91,7 @@ void collisionHandler() {
         switch (currentState) {
           case WAIT:
             //Serial.print("Wait ->");
-            //Serial.print("P");
+            Serial.print("P");
             avoidState = HOLD;
             previousMillis = currentMillis;
             currentState = MOVEBACK;
